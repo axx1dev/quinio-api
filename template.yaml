@@ -1,0 +1,135 @@
+# This is the SAM template that represents the architecture of your serverless application
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  quinio-api
+
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+Transform:
+- AWS::Serverless-2016-10-31
+
+# Resources declares the AWS resources that you want to include in the stack
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+Resources:
+  # Each Lambda function is defined by properties:
+  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+
+  # This is a Lambda function config associated with the source code: get-all-items.js
+  GetSaveDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/get-save-data.getAndSaveDataHandler
+      Runtime: nodejs16.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: save data of external API per page and after save in other DB
+      Environment:
+        Variables:
+          # Make table name accessible as environment variable from function code during execution
+          TOKEN: !Ref "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIiLCJzdXBwbGllcklkIjoiIiwicm9sZXMiOiJST0xFX0JVTEsiLCJpc3MiOiJlYWFzQGUtc2NhbGUubXgiLCJ1c2VyRmlyc3ROYW1lIjoiIiwidXNlck5hbWUiOiIgIiwidHlwZSI6ImUtc2NhbGUiLCJhdWQiOiJjb25zdHJ1cmFtYWJsYW5xdWl0YSIsInVzZXJMYXN0TmFtZSI6IiIsImV4cCI6MTY3NDgzNjQ1OSwiaWF0IjoxNjc0MjMxNjU5LCJqdGkiOiIwYzNjNWUyYWJlZjg0NjgyYmE1N2RjOTZiNTM0ZDkxZSIsImVtYWlsIjoiIn0.WBnMVVHz34LNHhVi-uULIKEapFXhGTzyn4JgwYYDT6E"
+          MONGODBURI: !Ref "mongodb+srv://adminwio:cjCzbPJ4TYo55I7m@cluster0.aedencb.mongodb.net/quinio?retryWrites=true&w=majority"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /get-save-data
+            Method: GET
+
+  # This is a Lambda function config associated with the source code
+  GetDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/get-data.getDataPurses
+      Runtime: nodejs16.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Get data per page and limit
+      Environment:
+        Variables:
+          # Make table name accessible as environment variable from function code during execution
+          TOKEN: !Ref "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIiLCJzdXBwbGllcklkIjoiIiwicm9sZXMiOiJST0xFX0JVTEsiLCJpc3MiOiJlYWFzQGUtc2NhbGUubXgiLCJ1c2VyRmlyc3ROYW1lIjoiIiwidXNlck5hbWUiOiIgIiwidHlwZSI6ImUtc2NhbGUiLCJhdWQiOiJjb25zdHJ1cmFtYWJsYW5xdWl0YSIsInVzZXJMYXN0TmFtZSI6IiIsImV4cCI6MTY3NDgzNjQ1OSwiaWF0IjoxNjc0MjMxNjU5LCJqdGkiOiIwYzNjNWUyYWJlZjg0NjgyYmE1N2RjOTZiNTM0ZDkxZSIsImVtYWlsIjoiIn0.WBnMVVHz34LNHhVi-uULIKEapFXhGTzyn4JgwYYDT6E"
+          MONGODBURI: !Ref "mongodb+srv://adminwio:cjCzbPJ4TYo55I7m@cluster0.aedencb.mongodb.net/quinio?retryWrites=true&w=majority"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /get-data-purses/{page}/{limit}/
+            Method: GET
+
+  # This is a Lambda function config associated with the source code
+  GetDataPerDateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/get-data.getDataPurses
+      Runtime: nodejs16.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Get data per page and limit
+      Environment:
+        Variables:
+          # Make table name accessible as environment variable from function code during execution
+          TOKEN: !Ref "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIiLCJzdXBwbGllcklkIjoiIiwicm9sZXMiOiJST0xFX0JVTEsiLCJpc3MiOiJlYWFzQGUtc2NhbGUubXgiLCJ1c2VyRmlyc3ROYW1lIjoiIiwidXNlck5hbWUiOiIgIiwidHlwZSI6ImUtc2NhbGUiLCJhdWQiOiJjb25zdHJ1cmFtYWJsYW5xdWl0YSIsInVzZXJMYXN0TmFtZSI6IiIsImV4cCI6MTY3NDgzNjQ1OSwiaWF0IjoxNjc0MjMxNjU5LCJqdGkiOiIwYzNjNWUyYWJlZjg0NjgyYmE1N2RjOTZiNTM0ZDkxZSIsImVtYWlsIjoiIn0.WBnMVVHz34LNHhVi-uULIKEapFXhGTzyn4JgwYYDT6E"
+          MONGODBURI: !Ref "mongodb+srv://adminwio:cjCzbPJ4TYo55I7m@cluster0.aedencb.mongodb.net/quinio?retryWrites=true&w=majority"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /get-data-purses/{page}/{limit}/{startDate}/{endDate}/
+            Method: GET
+  
+  GetDataFunctionCors:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/get-data.getDataPurses
+      Runtime: nodejs16.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Get data per page and limit OPTIONS
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /get-data-purses/{page}/{limit}
+            Method: OPTIONS
+            
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Join:
+        - ''
+        - - ApplicationInsights-SAM-
+          - Ref: AWS::StackName
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName:
+        Fn::Join:
+        - ''
+        - - ApplicationInsights-SAM-
+          - Ref: AWS::StackName
+      AutoConfigurationEnabled: 'true'
+    DependsOn: ApplicationResourceGroup
+
+Outputs:
+  GetSaveData:
+    Description: API Gateway endpoint URL for Prod stage
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get-save-data/"
+  GetData:
+    Description: API Gateway endpoint URL for Prod 
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/get-data-purses/"
+

@@ -1,0 +1,7 @@
+{
+    "httpMethod": "GET",
+    "pathParameters": {
+        "page": "0",
+        "limit": "10"
+    }
+}
