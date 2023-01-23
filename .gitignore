@@ -1,3 +1,2 @@
 node_modules
-template.yaml
-serverless-output.yaml
+*.yaml
